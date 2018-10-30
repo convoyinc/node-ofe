@@ -29,11 +29,9 @@ class FileOutputStream: public OutputStream {
     FILE* stream_;
 };
 
-static void OnFatalError(const char* location, const char* message) {
+static void OnFatalError(const char* location, bool is_heap_oom) {
   if (location)
-    fprintf(stderr, "FATAL ERROR: %s %s\n", location, message);
-  else
-    fprintf(stderr, "FATAL ERROR: %s\n", message);
+    fprintf(stderr, "FATAL ERROR: %s %s\n", location);
 
   fprintf(stderr, "Generating HeapDump\n");
 
@@ -67,12 +65,12 @@ static void OnFatalError(const char* location, const char* message) {
 
 NAN_METHOD(Method) {
   Nan::HandleScope scope;
-  V8::SetFatalErrorHandler(OnFatalError);
+  Isolate* isolate = Isolate::GetCurrent();
+  isolate->SetOOMErrorHandler(OnFatalError);
   info.GetReturnValue().Set(Nan::New("done").ToLocalChecked());
 }
 
 void Init(Handle<Object> target) {
-  V8::SetFatalErrorHandler(OnFatalError);
   target->Set(Nan::New("call").ToLocalChecked(),
       Nan::New<FunctionTemplate>(Method)->GetFunction());
 }
