@@ -31,7 +31,7 @@ class FileOutputStream: public OutputStream {
 
 static void OnFatalError(const char* location, bool is_heap_oom) {
   if (location)
-    fprintf(stderr, "FATAL ERROR: %s %s\n", location);
+    fprintf(stderr, "FATAL ERROR: %s\n", location);
 
   fprintf(stderr, "Generating HeapDump\n");
 
